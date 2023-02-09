@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import sys
 import re
-
+import base64
+import codecs
 from termcolor import colored
 
 
@@ -420,8 +421,13 @@ def regex(strings):
             attrs=["bold"],
         )
     )
-    print(colored("AGENT SALT:\t" + agent_salt, "red", attrs=["bold"]))
-    print(colored("AGENT HASH:\t" + agent_password, "red", attrs=["bold"]))
+    agent_hash = codecs.encode(codecs.decode(agent_password, 'hex'), 'base64').decode()
+    base64_salt = base64.b64encode(agent_salt.encode())
+    base64_salt = str(base64_salt)
+    base64_salt = base64_salt.strip("'""\n")
+    agent_hash = re.sub('\s','',agent_hash)
+    print(colored("AGENT SALT:\t" + base64_salt[2:], "red", attrs=["bold"]))
+    print(colored("AGENT HASH:\t" + agent_hash, "red", attrs=["bold"]))
     print("\n")
 
     print(
